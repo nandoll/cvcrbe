@@ -1,21 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  name      String?
+  firstName String
+  lastName  String
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Visit     Visit[]
+
+  @@map("users")
 }
 
 model Visit {
   id        String   @id @default(uuid())
-  ipAddress String
-  userAgent String?
   timestamp DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
+  source    String?
+  userAgent String?
+  language  String?
+  ipAddress String?
+  country   String?
+  city      String?
+  referrer  String?
+  duration  Int?     // duración en segundos
+  createdAt DateTime @default(now())
+
+  @@map("visits")
 }
 
 enum Role {
