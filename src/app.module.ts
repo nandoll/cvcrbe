@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import {
+  ThrottlerModule,
+  ThrottlerGuard,
+  ThrottlerModuleOptions,
+} from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -39,9 +43,14 @@ import * as Joi from 'joi';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        ttl: config.get<number>('THROTTLE_TTL', 60), // Tiempo de vida en segundos
-        limit: config.get<number>('THROTTLE_LIMIT', 10), // Número de peticiones permitidas en ese tiempo
+      useFactory: (config: ConfigService): ThrottlerModuleOptions => ({
+        throttlers: [
+          {
+            ttl: config.get<number>('THROTTLE_TTL', 60),
+            limit: config.get<number>('THROTTLE_LIMIT', 10),
+            name: 'default',
+          },
+        ],
       }),
     }),
 

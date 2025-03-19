@@ -31,7 +31,7 @@ export class PrismaService
   }
 
   async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
+    process.on('beforeExit', async () => {
       await app.close();
     });
   }
@@ -42,19 +42,14 @@ export class PrismaService
       process.env.NODE_ENV === 'test' ||
       process.env.NODE_ENV === 'development'
     ) {
-      const models = Reflect.ownKeys(this).filter((key) => {
-        return (
-          typeof key === 'string' &&
-          !key.startsWith('_') &&
-          !key.startsWith('$')
-        );
-      });
+      const transactions = [];
 
-      return Promise.all(
-        models.map((modelKey) => {
-          return this[modelKey as keyof PrismaService].deleteMany();
-        }),
-      );
+      // Añade aquí todas las entidades que necesitas limpiar
+      if (this.user) transactions.push(this.user.deleteMany());
+      // if (this.analytics) transactions.push(this.analytics.deleteMany()); --TODO: Revisar el schema de analytics
+      // Añade más modelos según tu esquema
+
+      return this.$transaction(transactions);
     }
   }
 }
