@@ -1,5 +1,6 @@
 // backend/src/cv/cv.controller.ts
 import { Controller, Get, Param, Put, Body, UseGuards } from '@nestjs/common';
+import { Public } from '../auth/decorators/public.decorator';
 import {
   ApiTags,
   ApiParam,
@@ -17,6 +18,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class CvController {
   constructor(private readonly cvService: CvService) {}
 
+  @Public()
   @Get(':lang')
   @ApiParam({ name: 'lang', enum: ['es', 'en'] })
   @ApiOperation({ summary: 'Get CV data by language' })

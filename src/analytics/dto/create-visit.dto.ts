@@ -32,6 +32,15 @@ export class CreateVisitDto {
   @IsOptional()
   language?: string;
 
+  @ApiProperty({
+    required: false,
+    description: 'Path of URL',
+    example: '/es',
+  })
+  @IsString()
+  @IsOptional()
+  path?: string;
+
   @ApiProperty({ required: false, description: 'Referrer URL' })
   @IsUrl({ require_tld: false }, { each: false })
   @IsOptional()
